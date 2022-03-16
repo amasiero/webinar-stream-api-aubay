@@ -6,11 +6,63 @@ import com.andreymasiero.finance.entities.Type;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class FinanceApplication {
     public static void main(String[] args) {
         var transactions = getTransactions();
-        System.out.println(transactions);
+//        Java 7 -> Imperative Programming
+//        for(Transaction transaction : transactions) {
+//            System.out.println(transaction);
+//        }
+
+        // Java 8 -> Declarative Programming
+//        transactions.forEach(System.out::println);
+
+        // filter
+
+        var totalIncome = getReduce(transactions, Type.INCOME);
+        var totalOutcome = getReduce(transactions, Type.OUTCOME);
+
+
+        System.out.println(totalIncome);
+        System.out.println(totalOutcome);
+
+        var maxValue = transactions.stream()
+                .map(Transaction::getValue)
+                .max(Double::compare)
+                .get();
+
+        var minValue = transactions.stream()
+                .map(Transaction::getValue)
+                .min(Double::compare)
+                .get();
+
+        System.out.println(maxValue);
+        System.out.println(minValue);
+
+        var noneMatch = transactions.stream()
+                .noneMatch(transaction -> transaction.getValue() < 0);
+        // sort
+        // all match
+        // any match
+        // none match
+        // max
+        // min
+        // group
+        // map
+        // reduce
+
+
+//        System.out.println(transactions);
+    }
+
+    private static Double getReduce(List<Transaction> transactions, Type type) {
+        return transactions.stream()
+                .filter(transaction -> transaction.getType().equals(type))
+                .map(Transaction::getValue)
+                .reduce(0., Double::sum);
     }
 
     public static List<Transaction> getTransactions() {
